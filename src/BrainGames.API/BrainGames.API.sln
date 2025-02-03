@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainGames.API", "BrainGames.API.csproj", "{E573F99E-7FB9-4273-A31E-2DB18E5546C1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E573F99E-7FB9-4273-A31E-2DB18E5546C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E573F99E-7FB9-4273-A31E-2DB18E5546C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E573F99E-7FB9-4273-A31E-2DB18E5546C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E573F99E-7FB9-4273-A31E-2DB18E5546C1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

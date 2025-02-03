@@ -1,0 +1,23 @@
+services:
+  braingames.db:
+    container_name: braingames.db
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - '8079:5432'
+
+  braingames.api:
+    container_name: braingames.api
+    build:
+      context: ./src/BrainGames.API/
+      dockerfile: ./Dockerfile
+    ports:
+      - '8080:8080'
+      - '8081:8081'
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - ConnectionStrings__BrainGamesDB=${CONNECTION_STRING}
+    depends_on:
+      braingames.db:
+        condition: service_started
