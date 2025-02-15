@@ -1,11 +1,11 @@
 import React from "react";
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import { TanstackQueryProvider } from "@/contexts/tanstack/tanstack-query-provider";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/auth-provider";
 
-const geistSans = Geist({
+const dmSans = DM_Sans({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} antialiased h-screen w-full flex justify-center items-center`}
+        className={`${dmSans.variable} antialiased h-screen w-full flex justify-center`}
       >
         <TanstackQueryProvider>
           <AuthProvider>{children}</AuthProvider>

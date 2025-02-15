@@ -1,32 +1,40 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { Spinner } from "@/components/ui/spinner";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import * as icon from "./favicon.ico";
 
 export default function Home() {
-  const { user, isAuthenticated, isLoading, logout } = useAuth0();
+  const router = useRouter();
+  const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
 
-  if (isLoading) {
-    return <div>Loading ...</div>;
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/app");
+    }
+  }, [isAuthenticated, router]);
+
+  if (isLoading || isAuthenticated) {
+    return <Spinner />;
+  } else {
+    return (
+      <div className="flex flex-col items-center justify-center gap-6">
+        <span className="font-semibold text-xl">Brain games</span>
+        <Image
+          priority={true}
+          src={icon}
+          alt="brain-icon"
+          width={64}
+          height={64}
+        />
+        <Button variant="outline" onClick={() => loginWithRedirect()}>
+          Join now!
+        </Button>
+      </div>
+    );
   }
-
-  return (
-    <div>
-      {isAuthenticated && user && (
-        <div>
-          <Image
-            src={user.picture ?? ""}
-            alt={user.name ?? "profile"}
-            width={200}
-            height={200}
-          />
-          <h2>{user.name}</h2>
-          <p>{user.email}</p>
-        </div>
-      )}
-      <span>Home</span>
-      <Button onClick={() => logout()}>logout</Button>
-    </div>
-  );
 }

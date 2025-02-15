@@ -1,5 +1,8 @@
 using System.Security.Claims;
 using BrainGames.API.Persistence;
+using BrainGames.API.Services;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -12,6 +15,14 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddMemoryCache();
+
+var assembly = typeof(Program).Assembly;
+builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(assembly));
+builder.Services
+    .AddValidatorsFromAssembly(assembly)
+    .AddFluentValidationAutoValidation();
 
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
@@ -31,6 +42,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 builder.Services.AddAuthorization();
+
+
+builder.Services.AddScoped<IUserContext, UserContext>();
+
 
 var app = builder.Build();
 
