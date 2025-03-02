@@ -3,14 +3,20 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { Spinner } from "@/components/ui/spinner";
+import { useMutation } from "@tanstack/react-query";
+import { LobbyService } from "@/services/lobby-service";
+import { useRouter } from "next/navigation";
 
 export default function AppPage() {
-  const { user, isAuthenticated, isLoading, logout } = useAuth0();
+  const router = useRouter();
+  const { user, isAuthenticated, logout } = useAuth0();
 
-  if (isLoading) {
-    return <Spinner />;
-  }
+  const createLobby = useMutation({
+    mutationFn: () => LobbyService.createLobby(),
+    onSuccess: (response) => {
+      router.push(`/app/game/${response.data}`);
+    },
+  });
 
   return (
     <div className="flex flex-col items-center justify-center gap-6">
@@ -28,6 +34,8 @@ export default function AppPage() {
         </div>
       )}
       <Button onClick={() => logout()}>Logout</Button>
+
+      <Button onClick={() => createLobby.mutate()}>Create lobby</Button>
     </div>
   );
 }

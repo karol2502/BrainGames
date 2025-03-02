@@ -1,11 +1,18 @@
+using System.Configuration;
 using System.Security.Claims;
+using BrainGames.API.Hubs;
+using BrainGames.API.Middlewares;
 using BrainGames.API.Persistence;
 using BrainGames.API.Services;
+using BrainGames.API.Workers;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +24,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddMemoryCache();
+builder.Services.AddSignalR();
 
 var assembly = typeof(Program).Assembly;
 builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(assembly));
@@ -43,8 +51,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 builder.Services.AddAuthorization();
 
+builder.Services.AddHangfire(configuration => configuration
+    .UseRecommendedSerializerSettings()
+    .UseSerializerSettings(new JsonSerializerSettings
+    {
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+    })
+    .UseInMemoryStorage()
+);
+
+// Add the processing server as IHostedService
+builder.Services.AddHangfireServer();
+
 
 builder.Services.AddScoped<IUserContext, UserContext>();
+builder.Services.AddHostedService<UpdateGameWorker>();
 
 
 var app = builder.Build();
@@ -55,6 +76,8 @@ app.UseCors(x => x
     .SetIsOriginAllowed(_ => true) // allow any origin
     .AllowCredentials());
 
+app.UseMiddleware<HubsMiddleware>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -63,11 +86,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseHangfireDashboard();
+app.MapHangfireDashboard();
+
 app.MapControllers();
+app.MapHub<GameHub>("/hubs/game", options =>
+{
+    options.Transports = HttpTransportType.WebSockets;
+});
 
 app.Run();
