@@ -1,4 +1,13 @@
 services:
+  braingames.redis:
+    image: redis:latest
+    container_name: braingames.redis
+    hostname: redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '8078:6379'
+
   braingames.db:
     container_name: braingames.db
     image: postgres:latest

@@ -29,7 +29,11 @@ export default function LoginSuccessfulPage() {
     if (isFetched && isSuccess) {
       router.push("/app");
     }
-  }, [isFetched, isSuccess, router]);
+
+    if (!isLoading && !isAuthenticated) {
+      router.push("/");
+    }
+  }, [isAuthenticated, isFetched, isLoading, isSuccess, router]);
 
   return (
     <div>

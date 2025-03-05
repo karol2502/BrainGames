@@ -1,5 +1,5 @@
 type IAuthInterceptor = {
-  getToken?: any;
+  getToken?: () => Promise<any>;
   intercept: (config: any) => Promise<any>;
 };
 
