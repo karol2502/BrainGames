@@ -1,4 +1,4 @@
-name: Build and push API docker image
+name: Build and push Next.js docker image
 
 on:
   workflow_dispatch:
@@ -24,7 +24,10 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: ./src/BrainGames.API
-          file: src/BrainGames.API/Dockerfile
+          context: ./src/BrainGames.UI.Next
+          file: src/BrainGames.UI.Next/Dockerfile
           push: true
-          tags: ghcr.io/karol2502/braingames:api-latest
+          tags: ghcr.io/karol2502/braingames:ui-latest
+          build-args: |
+            "NEXT_PUBLIC_AUTH0_AUDIENCE=${{ vars.NEXT_PUBLIC_AUTH0_AUDIENCE }}" |
+            "NEXT_PUBLIC_API_BASE_URL=${{ vars.NEXT_PUBLIC_API_BASE_URL }}"
