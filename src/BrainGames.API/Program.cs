@@ -37,7 +37,7 @@ builder.Host.UseSerilog((context, configuration) =>
 
 builder.Services
     .AddDbContext<BrainGamesDbContext>(options =>
-        options.UseNpgsql(builder.Configuration.GetConnectionString("BrainGamesDB")));
+        options.UseSqlServer(builder.Configuration.GetConnectionString("BrainGamesDB")));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -84,6 +84,7 @@ var app = builder.Build();
 
 var scope = app.Services.CreateScope();
 var cleaner = scope.ServiceProvider.GetRequiredService<IDbCleaner>();
+await cleaner.Seed();
 await cleaner.CleanAsync();
 
 app.UseCors(x => x

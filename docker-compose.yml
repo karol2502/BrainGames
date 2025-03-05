@@ -10,11 +10,12 @@ services:
 
   braingames.db:
     container_name: braingames.db
-    image: postgres:latest
+    image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      - SA_PASSWORD=P@ssword
+      - ACCEPT_EULA=Y
     ports:
-      - '8079:5432'
+      - '8079:1433'
 
   braingames.api:
     container_name: braingames.api
