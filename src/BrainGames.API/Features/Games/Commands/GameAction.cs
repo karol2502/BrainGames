@@ -1,7 +1,9 @@
 using System.Text.Json;
+using BrainGames.API.Cache;
+using BrainGames.API.Services;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace BrainGames.API.Features.Games.Commands;
 
@@ -9,32 +11,36 @@ public static class GameAction
 {
     public class Command : IRequest
     {
-        public HubCallerContext Context { get; init; } = null!;
+        public HubCallerContext CallerContext { get; init; } = null!;
         public JsonElement Payload { get; init; }
     }
-    
+
     internal sealed class Handler(
         ILogger<Handler> logger,
-        IMemoryCache cache) : IRequestHandler<Command>
+        IGameActionHandler gameActionHandler,
+        IDistributedCache cache) : IRequestHandler<Command>
     {
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
-            request.Context.GetHttpContext()?.Request.Query.TryGetValue("lobbyId", out var lobbyId);
-            
-            if (!cache.TryGetValue<Models.Game.Lobby>(lobbyId.ToString(), out var lobby) || lobby is null)
+            var httpContext = request.CallerContext.GetHttpContext()
+                ?? throw new InvalidOperationException("HttpContext not found in CallerContext");
+            httpContext.Request.Query.TryGetValue("lobbyId", out var lobbyId );
+
+            var lobby = await cache.GetAsync<Models.Game.Lobby>($"lobby:{lobbyId.ToString()}", cancellationToken);
+            if (lobby is null)
             {
-                request.Context.Abort();
+                request.CallerContext.Abort();
                 logger.LogInformation("Lobby not found in cache");
                 return;
             }
 
-            if (lobby.ActiveGame is null)
+            if (lobby.ActiveGameId is null)
             {
                 logger.LogInformation("No active game in lobby {lobby}", lobby.Id);
                 return;
             }
-            
-            await lobby.ActiveGame.ExecuteActionAsync(request.Payload, request.Context,  cancellationToken);
+
+            await gameActionHandler.ExecuteGameActionAsync(lobby.ActiveGameId, request.Payload, request.CallerContext, cancellationToken);
         }
     }
 }

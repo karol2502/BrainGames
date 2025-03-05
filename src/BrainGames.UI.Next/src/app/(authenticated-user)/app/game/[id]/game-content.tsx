@@ -141,6 +141,9 @@ export const GameContent = ({ id }: Props) => {
       {lobby?.status === LobbyStatus.LoadingScreen && (
         <LoadingScreen
           title={(commandPayload as { gameName: string }).gameName}
+          description={
+            (commandPayload as { gameDescription: string }).gameDescription
+          }
           initialTime={
             (commandPayload as { loadingScreenDuration: number })
               .loadingScreenDuration
@@ -151,7 +154,7 @@ export const GameContent = ({ id }: Props) => {
         <GameFactory gameName={gameName!} payload={commandPayload!} />
       )}
       {lobby?.status === LobbyStatus.Scoreboard && (
-        <Scoreboard lobby={lobby} payload={commandPayload!} />
+        <Scoreboard lobby={lobby} payload={commandPayload!} isAdmin={isAdmin} />
       )}
     </div>
   );

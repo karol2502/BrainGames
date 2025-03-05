@@ -1,3 +1,4 @@
+using BrainGames.API.Cache;
 using BrainGames.API.Common.Constants;
 using BrainGames.API.Hubs;
 using BrainGames.API.Models.Game;
@@ -5,7 +6,8 @@ using BrainGames.API.Persistence;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Distributed;
+
 
 namespace BrainGames.API.Features.Games.Commands;
 
@@ -18,23 +20,19 @@ public static class PlayerJoined
 
     internal sealed class Handler(
         ILogger<Handler> logger,
-        IMemoryCache cache,
+        IDistributedCache cache,
         BrainGamesDbContext dbContext,
         IHubContext<GameHub> hubContext) : IRequestHandler<Command>
     {
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
             var connectionId = request.Context.ConnectionId;
-            var query = request.Context.GetHttpContext()?.Request.Query;
+            var httpContext = request.Context.GetHttpContext()
+                              ?? throw new InvalidOperationException("HttpContext not found in CallerContext");
+            httpContext.Request.Query.TryGetValue("lobbyId", out var lobbyId );
 
-            if (query is not null && !query.TryGetValue("lobbyId", out var lobbyId) || lobbyId.Count != 1)
-            {
-                request.Context.Abort();
-                logger.LogInformation("LobbyId not found in query parameters");
-                return;
-            }
-
-            if (!cache.TryGetValue<Models.Game.Lobby>(lobbyId.ToString(), out var lobby) || lobby is null)
+            var lobby = await cache.GetAsync<Models.Game.Lobby>($"lobby:{lobbyId.ToString()}", cancellationToken);
+            if (lobby is null)
             {
                 request.Context.Abort();
                 logger.LogInformation("Lobby not found in cache");
@@ -56,6 +54,8 @@ public static class PlayerJoined
                 lobby.Host = newPlayer;
             }
             lobby.Players.Add(newPlayer);
+            
+            await cache.SetAsync($"lobby:{lobbyId.ToString()}", lobby, cancellationToken);
         
             logger.LogInformation("Player {player} joined lobby {lobby}", newPlayer.User.NameIdentifier, lobby.Id);
         

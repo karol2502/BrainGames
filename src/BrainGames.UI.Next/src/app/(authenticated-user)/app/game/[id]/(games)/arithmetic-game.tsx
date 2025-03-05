@@ -34,7 +34,7 @@ export const ArithmeticGame = ({ payload }: Props) => {
   return (
     <div className="flex flex-col p-8 gap-8">
       <div>
-        <span>Time left:</span>
+        <span>Time left: </span>
         <span>
           <CountdownTimer initialTime={typedPayload.gameDuration} />
         </span>

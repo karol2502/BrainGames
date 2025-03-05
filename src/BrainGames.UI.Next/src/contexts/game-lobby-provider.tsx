@@ -1,7 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
-import { Lobby } from "@/models/lobby";
+import React, { createContext, useContext } from "react";
 
 type GameLobbyContextType = {};
 
@@ -16,8 +15,8 @@ export const GameLobbyProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [lobby, setLobby] = useState<Lobby | null>(null);
-  const [commandPayload, setCommandPayload] = useState<object | null>(null);
+  // const [lobby, setLobby] = useState<Lobby | null>(null);
+  // const [commandPayload, setCommandPayload] = useState<object | null>(null);
 
   return (
     <GameLobbyContext.Provider value={{}}>{children}</GameLobbyContext.Provider>

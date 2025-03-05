@@ -4,18 +4,17 @@ namespace BrainGames.API.Models.Game;
 
 public class Lobby
 {
-    public string Id { get; } = Guid.NewGuid().ToString();
-    public List<Player> Players { get; } = [];
-    public LobbyStatusEnum Status { get; private set; } = LobbyStatusEnum.WaitingForStart;
+    public string Id { get; init; } = Guid.NewGuid().ToString();
+    public List<Player> Players { get; init; } = [];
+    public LobbyStatusEnum Status { get; set; } = LobbyStatusEnum.WaitingForStart;
     public Player? Host { get; set; }
-    public Game? ActiveGame { get; private set; }
-    public List<Game> GamesHistory { get; } = [];
+    public string? ActiveGameId { get; set; }
+    public List<string> HistoryGamesId { get; set; } = [];
 
-    public async Task StartNewGame(Game newGame, CancellationToken cancellationToken)
+    public void PrepareForNewGame(string newGameId)
     {
         Status = LobbyStatusEnum.LoadingScreen;
-        ActiveGame = newGame;
-        await newGame.StartAsync(cancellationToken);
+        ActiveGameId = newGameId;
     }
     
     public void SetStatus(LobbyStatusEnum status)
