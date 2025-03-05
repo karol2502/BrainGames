@@ -24,7 +24,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: .
+          context: ./src/BrainGames.API
           file: src/BrainGames.API/Dockerfile
           push: true
           tags: ghcr.io/karol2502/braingames.api:latest
