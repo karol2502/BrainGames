@@ -27,4 +27,4 @@ jobs:
           context: ./src/BrainGames.API
           file: src/BrainGames.API/Dockerfile
           push: true
-          tags: ghcr.io/karol2502/braingames.api:latest
+          tags: ghcr.io/karol2502/braingames:latest
