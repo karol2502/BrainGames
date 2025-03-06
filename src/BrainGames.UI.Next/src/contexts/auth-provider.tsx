@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }: Props) => {
       domain="karolangrys.eu.auth0.com"
       clientId="1W1vfgkIOwA4j68RSjZAQ0bMhA8fuOdj"
       authorizationParams={{
-        redirect_uri: "http://localhost:3000/login/successful",
+        redirect_uri: process.env.NEXT_PUBLIC_AUTH0_REDIRECT_URL,
         audience: "https://karolangrys.eu.auth0.com/api/v2/",
       }}
       useRefreshTokens

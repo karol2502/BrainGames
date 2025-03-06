@@ -25,6 +25,7 @@ jobs:
         run: |
           echo "NEXT_PUBLIC_AUTH0_AUDIENCE=${{ vars.NEXT_PUBLIC_AUTH0_AUDIENCE }}" >> ./src/BrainGames.UI.Next/.env
           echo "NEXT_PUBLIC_API_BASE_URL=${{ vars.NEXT_PUBLIC_API_BASE_URL }}" >> ./src/BrainGames.UI.Next/.env
+          echo "NEXT_PUBLIC_AUTH0_REDIRECT_URL=${{ vars.NEXT_PUBLIC_AUTH0_REDIRECT_URL }}" >> ./src/BrainGames.UI.Next/.env
           cat ./src/BrainGames.UI.Next/.env
 
       - name: Build and push Docker image
