@@ -73,6 +73,8 @@ builder.Services.AddHangfireServer(options =>
     options.SchedulePollingInterval = TimeSpan.FromSeconds(1);
 });
 
+Console.WriteLine(builder.Configuration.GetConnectionString("Redis"));
+
 var multiplexer = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis")!);
 builder.Services.AddSingleton<IConnectionMultiplexer>(multiplexer);
 
