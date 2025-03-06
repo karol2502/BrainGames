@@ -1,3 +1,5 @@
+"use client";
+
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { AuthInterceptor } from "@/services/auth-interceptor";
 
