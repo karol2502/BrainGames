@@ -23,6 +23,7 @@ internal sealed class ArithmeticGame : Game
     public int GameDuration { get; init; } = 60;
     public int GameLoadingScreenDuration { get; init; } = 3;
     public State GameState { get; init; } = null!;
+    public int MaxNumberToCalculate { get; init; } = 200;
 
 
     public class State
@@ -168,29 +169,29 @@ internal sealed class ArithmeticGame : Game
         switch (operation)
         {
             case 0:
-                num1 = random.Next(1, 500);
-                num2 = random.Next(1, 1000 - num1);
+                num1 = random.Next(1, MaxNumberToCalculate/2);
+                num2 = random.Next(1, MaxNumberToCalculate - num1);
 
                 newRound.Question = $"{num1} + {num2}";
                 newRound.Answer = num1 + num2;
                 break;
             case 1:
-                num1 = random.Next(1, 1000);
+                num1 = random.Next(1, MaxNumberToCalculate);
                 num2 = random.Next(1, num1);
 
                 newRound.Question = $"{num1} - {num2}";
                 newRound.Answer = num1 - num2;
                 break;
             case 2:
-                num1 = random.Next(1, 100);
-                num2 = random.Next(1, 1000 / num1);
+                num1 = random.Next(1, MaxNumberToCalculate/10);
+                num2 = random.Next(1, MaxNumberToCalculate / num1);
 
                 newRound.Question = $"{num1} * {num2}";
                 newRound.Answer = num1 * num2;
                 break;
             case 3:
-                num1 = random.Next(1, 100);
-                num2 = random.Next(1, 1000 / num1);
+                num1 = random.Next(1, MaxNumberToCalculate/10);
+                num2 = random.Next(1, MaxNumberToCalculate / num1);
 
                 var dividend = num1 * num2;
                 newRound.Question = $"{dividend} / {num1}";
