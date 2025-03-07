@@ -26,14 +26,20 @@ export default function AppPage() {
             priority={true}
             src={user.picture ?? ""}
             alt={user.name ?? "profile"}
-            width={200}
-            height={200}
+            width={64}
+            height={64}
           />
           <h2>{user.name}</h2>
           <p>{user.email}</p>
         </div>
       )}
-      <Button onClick={() => logout()}>Logout</Button>
+      <Button
+        onClick={() =>
+          logout({ logoutParams: { returnTo: window.location.origin } })
+        }
+      >
+        Logout
+      </Button>
 
       <Button onClick={() => createLobby.mutate()}>Create lobby</Button>
     </div>
